@@ -529,19 +529,19 @@ if not all_mapped_rows:
     st.error("The file loaded, but no rows could be mapped into the framework.")
     st.stop()
 
-shows = ["All shows"] + sorted({row["show"] for row in all_mapped_rows})
+unique_shows = sorted({row["show"] for row in all_mapped_rows})
+
+if "Where is the Green Sheep" not in unique_shows:
+    unique_shows.append("Where is the Green Sheep")
+
+shows = ["All shows"] + unique_shows
+
 default_show = shows[0]
 base_rows = all_mapped_rows
 
 c1, c2, c3 = st.columns(3)
 with c1:
-    selected_show = st.selectbox("Show", shows, index=0)
-default_show = shows[0]
-base_rows = all_mapped_rows
-
-c1, c2, c3 = st.columns(3)
-with c1:
-    selected_show = st.selectbox("Show", shows, index=0)
+    selected_show = st.selectbox("Show", shows, index=0, key="show_filter_main")
 if selected_show == "All shows":
     base_rows = all_mapped_rows
 else:
@@ -549,9 +549,9 @@ else:
 audiences = ["All"] + sorted({row["audience"] for row in base_rows})
 locations = ["All"] + sorted({row["location"] for row in base_rows})
 with c2:
-    filter_audience = st.selectbox("Audience", audiences)
+    filter_audience = st.selectbox("Audience", audiences, key="audience_filter_main")
 with c3:
-    filter_location = st.selectbox("Location", locations)
+    filter_location = st.selectbox("Location", locations, key="location_filter_main")
 
 filtered_rows = [row for row in base_rows if (filter_audience == "All" or row["audience"] == filter_audience) and (filter_location == "All" or row["location"] == filter_location)]
 filtered_source_rows = [
@@ -651,11 +651,11 @@ with main_col:
     tf1, tf2, tf3 = st.columns(3)
     table_audience_options = ["All"] + sorted({row["audience"] for row in filtered_rows})
     with tf1:
-        table_audience = st.selectbox("Audience filter", table_audience_options)
+        table_audience = st.selectbox("Audience filter", table_audience_options, key="table_audience")
     with tf2:
-        table_category = st.selectbox("Category filter", ["All", "Social", "Cultural"])
+        table_category = st.selectbox("Category filter", ["All", "Social", "Cultural"], key="table_category")
     with tf3:
-        table_stage = st.selectbox("Stage filter", ["All", "Spark", "Growth", "Horizon"])
+        table_stage = st.selectbox("Stage filter", ["All", "Spark", "Growth", "Horizon"], key="table_stage")
 
     filtered_table_rows = [row for row in filtered_rows if (table_audience == "All" or row["audience"] == table_audience) and (table_category == "All" or row["category"] == table_category) and (table_stage == "All" or row["stage"] == table_stage)]
     page_size = 10
