@@ -515,7 +515,8 @@ div[data-testid="column"] {
 if "messages" not in st.session_state:
     st.session_state.messages = [{"role": "assistant", "content": BOT_INTRO}]
 
-st.title("Monkey Baa Impact Analyzer")
+st.title("Monkey Baa Impact Dashboard")
+st.caption("Framework-aligned analysis of social and cultural outcomes")
 uploaded_file = st.file_uploader("Upload a CSV or Excel survey export", type=["csv", "xlsx", "xls"])
 if uploaded_file is None:
     st.info("Upload a CSV or Excel survey export and analyze it using the Monkey Baa outcome framework.")
@@ -573,7 +574,9 @@ filtered_source_rows = [
 ]
 
 analytics = compute_analytics(filtered_rows, len(source_rows))
-report_text = create_report_text(analytics, uploaded_file.name if selected_show == "All shows" else f"{uploaded_file.name} - {selected_show}")
+with st.spinner("Generating insights..."):
+    
+   report_text = create_report_text(analytics, uploaded_file.name if selected_show == "All shows" else f"{uploaded_file.name} - {selected_show}")
 
 top_left, top_mid, top_right = st.columns([1, 2, 1])
 with top_left:
@@ -601,8 +604,19 @@ with main_col:
 
     # 🔥 MAIN INSIGHT CHART (FIXED POSITION)
     st.markdown('<div class="side-card">', unsafe_allow_html=True)
+    spark = find_kpi(analytics["kpis"], "Social Spark")["value"]
+    growth = find_kpi(analytics["kpis"], "Social Growth")["value"]
+    horizon = find_kpi(analytics["kpis"], "Social Horizon")["value"]
+
     st.subheader("Outcome Comparison: Spark vs Growth vs Horizon")
 
+    gap = horizon - spark
+
+    st.markdown(f"""
+<div style="font-size:14px;color:#4b5563;margin-top:6px;">
+There is a <b>{gap}% gap</b> between initial engagement (Spark) and long-term impact (Horizon), indicating strong sustained outcomes beyond first impressions.
+</div>
+""", unsafe_allow_html=True)
     spark = find_kpi(analytics["kpis"], "Social Spark")["value"]
     growth = find_kpi(analytics["kpis"], "Social Growth")["value"]
     horizon = find_kpi(analytics["kpis"], "Social Horizon")["value"]
