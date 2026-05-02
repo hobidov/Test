@@ -60,12 +60,12 @@ MAPPING_RULES = [
 ]
 
 DEFAULT_KPIS = [
-    {"label": "Social Spark", "value": 0, "category": "Social", "stage": "Spark", "color": PALETTE["orange"]},
-    {"label": "Social Growth", "value": 0, "category": "Social", "stage": "Growth", "color": PALETTE["coral"]},
+    {"label": "Social Spark", "value": 0, "category": "Social", "stage": "Spark", "color": PALETTE["primary"]},
+    {"label": "Social Growth", "value": 0, "category": "Social", "stage": "Growth", "color": PALETTE["secondary"]},
     {"label": "Social Horizon", "value": 0, "category": "Social", "stage": "Horizon", "color": PALETTE["gold"]},
-    {"label": "Cultural Spark", "value": 0, "category": "Cultural", "stage": "Spark", "color": PALETTE["blue"]},
-    {"label": "Cultural Growth", "value": 0, "category": "Cultural", "stage": "Growth", "color": PALETTE["purple"]},
-    {"label": "Cultural Horizon", "value": 0, "category": "Cultural", "stage": "Horizon", "color": PALETTE["teal"]},
+    {"label": "Cultural Spark", "value": 0, "category": "Cultural", "stage": "Spark", "color": PALETTE["accent"]},
+    {"label": "Cultural Growth", "value": 0, "category": "Cultural", "stage": "Growth", "color": PALETTE["secondary"]},
+    {"label": "Cultural Horizon", "value": 0, "category": "Cultural", "stage": "Horizon", "color": PALETTE["primary"]},
 ]
 
 def safe(value: Any) -> str:
@@ -255,12 +255,12 @@ def compute_analytics(filtered_rows: List[Dict[str, Any]], source_row_count: int
     def by_category_stage(category: str, stage: str) -> List[Dict[str, Any]]:
         return [row for row in filtered_rows if row["category"] == category and row["stage"] == stage]
     kpis = [
-        build_kpi("Social Spark", by_category_stage("Social", "Spark"), "Social", "Spark", PALETTE["orange"]),
-        build_kpi("Social Growth", by_category_stage("Social", "Growth"), "Social", "Growth", PALETTE["coral"]),
+        build_kpi("Social Spark", by_category_stage("Social", "Spark"), "Social", "Spark", PALETTE["primary"]),
+        build_kpi("Social Growth", by_category_stage("Social", "Growth"), "Social", "Growth", PALETTE["secondary"]),
         build_kpi("Social Horizon", by_category_stage("Social", "Horizon"), "Social", "Horizon", PALETTE["gold"]),
-        build_kpi("Cultural Spark", by_category_stage("Cultural", "Spark"), "Cultural", "Spark", PALETTE["blue"]),
-        build_kpi("Cultural Growth", by_category_stage("Cultural", "Growth"), "Cultural", "Growth", PALETTE["purple"]),
-        build_kpi("Cultural Horizon", by_category_stage("Cultural", "Horizon"), "Cultural", "Horizon", PALETTE["teal"]),
+        build_kpi("Cultural Spark", by_category_stage("Cultural", "Spark"), "Cultural", "Spark", PALETTE["accent"]),
+        build_kpi("Cultural Growth", by_category_stage("Cultural", "Growth"), "Cultural", "Growth", PALETTE["secondary"]),
+        build_kpi("Cultural Horizon", by_category_stage("Cultural", "Horizon"), "Cultural", "Horizon", PALETTE["primary"]),
     ]
     outcomes = outcome_stats(filtered_rows)
     overall = avg([k["value"] for k in kpis])
@@ -626,12 +626,12 @@ with main_col:
     with s1:
         st.markdown('<div class="side-card">', unsafe_allow_html=True)
         st.subheader("Show Comparison")
-        bar_rows(show_counts, "count", PALETTE["blue"])
+        bar_rows(show_counts, "count", PALETTE["primary"])
         st.markdown("</div>", unsafe_allow_html=True)
     with s2:
         st.markdown('<div class="side-card">', unsafe_allow_html=True)
         st.subheader("Behaviour Distribution")
-        bar_rows(behaviour_counts, "count", PALETTE["coral"])
+        bar_rows(behaviour_counts, "count", PALETTE["secondary"])
         st.markdown("</div>", unsafe_allow_html=True)
 
     s3, s4 = st.columns(2)
@@ -648,12 +648,12 @@ with main_col:
     with s4:
         st.markdown('<div class="side-card">', unsafe_allow_html=True)
         st.subheader("Audience Segmentation")
-        bar_rows(audience_counts, "count", PALETTE["purple"])
+        bar_rows(audience_counts, "count", PALETTE["secondary"])
         st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown('<div class="side-card" style="margin-top:16px;">', unsafe_allow_html=True)
     st.subheader("Location Distribution")
-    bar_rows(location_counts, "count", PALETTE["teal"])
+    bar_rows(location_counts, "count", PALETTE["accent"])
     st.markdown("</div>", unsafe_allow_html=True)
 
     st.markdown('<div class="side-card" style="margin-top:16px;">', unsafe_allow_html=True)
