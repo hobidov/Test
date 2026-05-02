@@ -592,13 +592,32 @@ with top_right:
 main_col, side_col = st.columns([3.2, 1.25], gap="large")
 
 with main_col:
-    st.markdown('<div class="banner-core"><div style="font-size:13px;font-weight:700;text-transform:uppercase;">Core Impact Charts</div><div style="margin-top:4px;font-size:14px;color:#4b5563;">These are framework-critical metrics directly mapped to Monkey Baa’s Theory of Change (Spark → Growth → Horizon). Use these for decision-making and reporting.</div></div>', unsafe_allow_html=True)
+    st.markdown('<div class="banner-core">...</div>', unsafe_allow_html=True)
 
     kpi_cols = st.columns(3)
     for idx, kpi in enumerate(analytics["kpis"]):
         with kpi_cols[idx % 3]:
             kpi_card(kpi["label"], kpi["value"], kpi["category"], kpi["stage"], kpi["color"])
 
+    # 🔥 MAIN INSIGHT CHART (FIXED POSITION)
+    st.markdown('<div class="side-card">', unsafe_allow_html=True)
+    st.subheader("Outcome Comparison: Spark vs Growth vs Horizon")
+
+    spark = find_kpi(analytics["kpis"], "Social Spark")["value"]
+    growth = find_kpi(analytics["kpis"], "Social Growth")["value"]
+    horizon = find_kpi(analytics["kpis"], "Social Horizon")["value"]
+
+    comparison_data = [
+        {"label": "Spark", "value": spark},
+        {"label": "Growth", "value": growth},
+        {"label": "Horizon", "value": horizon},
+    ]
+
+    bar_rows(comparison_data, "value", PALETTE["primary"], "%")
+
+    st.caption("This chart highlights the performance gap between Spark, Growth, and Horizon outcomes.")
+    st.markdown("</div>", unsafe_allow_html=True)
+    
     stage_pairs = [("Social", "Spark"), ("Social", "Growth"), ("Social", "Horizon"), ("Cultural", "Spark"), ("Cultural", "Growth"), ("Cultural", "Horizon")]
     for i in range(0, len(stage_pairs), 2):
         cols = st.columns(2)
@@ -637,18 +656,43 @@ with main_col:
     with s3:
         st.markdown('<div class="side-card">', unsafe_allow_html=True)
         st.subheader("Emotion Distribution")
-        if px and emotion_counts:
-            fig = px.pie(pd.DataFrame(emotion_counts), values="count", names="label", hole=0)
-            fig.update_layout(height=340, margin=dict(l=10, r=10, t=10, b=10))
-            st.plotly_chart(fig, use_container_width=True)
-        else:
-            bar_rows(emotion_counts, "count", PALETTE["gold"])
+        bar_rows(emotion_counts, "count", PALETTE["primary"])
+        st.caption("This chart shows the distribution of emotions experienced by participants.")
         st.markdown("</div>", unsafe_allow_html=True)
     with s4:
         st.markdown('<div class="side-card">', unsafe_allow_html=True)
         st.subheader("Audience Segmentation")
         bar_rows(audience_counts, "count", PALETTE["secondary"])
         st.markdown("</div>", unsafe_allow_html=True)
+
+    # 🔥 SENTIMENT ANALYSIS
+        st.markdown('<div class="side-card">', unsafe_allow_html=True)
+        st.subheader("Sentiment Analysis of Participant Feedback")
+
+        sentiment_counts = {
+        "Positive Experience": 0,
+        "Mixed Response": 0,
+        "Challenging Experience": 0
+    }
+
+        for item in emotion_counts:
+           label = item["label"].lower()
+
+           if label in ["happy", "excited", "inspired", "curious"]:
+               sentiment_counts["Positive Experience"] += item["count"]
+           elif label in ["confused", "bored"]:
+               sentiment_counts["Mixed Response"] += item["count"]
+           else:
+               sentiment_counts["Challenging Experience"] += item["count"]
+
+        sentiment_data = [{"label": k, "count": v} for k, v in sentiment_counts.items()]
+
+        bar_rows(sentiment_data, "count", PALETTE["secondary"])
+
+        st.caption("This chart groups participant responses into overall experience categories.")
+        st.markdown("</div>", unsafe_allow_html=True)
+
+
 
     st.markdown('<div class="side-card" style="margin-top:16px;">', unsafe_allow_html=True)
     st.subheader("Location Distribution")
