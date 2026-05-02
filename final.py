@@ -13,23 +13,21 @@ except Exception:
     px = None
 
 PALETTE = {
-    "orange": "#FF6A2A",
-    "coral": "#F04E4E",
-    "blue": "#4DB7E5",
-    "cream": "#FFF7E8",
-    "ink": "#2F2A24",
-    "purple": "#7C3AED",
-    "teal": "#14B8A6",
-    "gold": "#D4A017",
+    "primary": "#4DB7E5",   # soft blue
+    "secondary": "#7C3AED", # purple
+    "accent": "#14B8A6",    # teal
+    "neutral": "#6B7280",   # grey
+    "light": "#F8FAFC",     # background
+    "gold": "#D4A017"
 }
 
 STAGE_COLORS = {
-    ("Social", "Spark"): PALETTE["orange"],
-    ("Social", "Growth"): PALETTE["coral"],
+    ("Social", "Spark"): PALETTE["primary"],
+    ("Social", "Growth"): PALETTE["secondary"],
     ("Social", "Horizon"): PALETTE["gold"],
-    ("Cultural", "Spark"): PALETTE["blue"],
-    ("Cultural", "Growth"): PALETTE["purple"],
-    ("Cultural", "Horizon"): PALETTE["teal"],
+    ("Cultural", "Spark"): PALETTE["accent"],
+    ("Cultural", "Growth"): PALETTE["secondary"],
+    ("Cultural", "Horizon"): PALETTE["primary"],
 }
 
 BOT_INTRO = "Ask me about Social Spark, Social Horizon, Cultural Growth, Cultural Horizon, outcomes, or recommendations."
@@ -415,10 +413,22 @@ def normalize_dataframe(df: pd.DataFrame) -> pd.DataFrame:
 
 def kpi_card(label: str, value: int, category: str, stage: str, color: str):
     st.markdown(f"""
-        <div class="kpi-card" style="background:white;border:1px solid #f1f1f1;border-radius:24px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,0.06);min-height:190px;">
-          <div style="font-size:13px;color:#6b7280;margin-bottom:6px;">{category} · {stage}</div>
-          <div style="font-size:17px;font-weight:700;line-height:1.4;margin-bottom:8px;">{label}</div>
-          <div style="font-size:40px;font-weight:900;color:{color};margin-top:6px;">{value}%</div>
+        <div style="
+            background:white;
+            border:1px solid #e5e7eb;
+            border-radius:16px;
+            padding:12px;
+            min-height:120px;
+        ">
+          <div style="font-size:11px;color:#6b7280;">
+            {category} · {stage}
+          </div>
+          <div style="font-size:14px;font-weight:600;margin-top:4px;">
+            {label}
+          </div>
+          <div style="font-size:26px;font-weight:800;color:{color};margin-top:6px;">
+            {value}%
+          </div>
         </div>
     """, unsafe_allow_html=True)
 
@@ -446,7 +456,7 @@ def bar_rows(items: List[Dict[str, Any]], value_key: str, color: str, pct_suffix
 st.set_page_config(page_title="Monkey Baa Impact Dashboard", layout="wide")
 st.markdown("""
 <style>
-.stApp { background: #FFF7E8; }
+.stApp { background: #F8FAFC; }
 
 /* GLOBAL PADDING */
 .block-container {
@@ -487,7 +497,7 @@ st.markdown("""
 
 /* KPI SPACING */
 .kpi-card {
-    margin-bottom:16px;
+    margin-bottom:10px;
 }
 
 /* COLUMN GAP FIX */
@@ -597,7 +607,7 @@ with main_col:
             subset = [item for item in analytics["outcomeStats"] if item["category"] == category and item["stage"] == stage]
             with col:
                 st.markdown('<div class="side-card">', unsafe_allow_html=True)
-                st.subheader(f"Outcome Breakdown — {category} {stage}")
+                st.subheader(f"{category} {stage} Outcomes")
                 if subset:
                     bar_rows(subset, "value", STAGE_COLORS[(category, stage)], "%")
                 else:
@@ -677,7 +687,7 @@ with side_col:
         if message["role"] == "assistant":
             st.markdown(f'<div style="white-space:pre-line;border:1px solid #f6d3c7;background:white;border-radius:18px;padding:12px;margin-bottom:10px;">{message["content"]}</div>', unsafe_allow_html=True)
         else:
-            st.markdown(f'<div style="white-space:pre-line;background:#FF6A2A;color:white;border-radius:18px;padding:12px;margin-bottom:10px;margin-left:24px;">{message["content"]}</div>', unsafe_allow_html=True)
+            st.markdown(f'<div style="white-space:pre-line;background:#4DB7E5;color:white;border-radius:18px;padding:12px;margin-bottom:10px;margin-left:24px;">{message["content"]}</div>', unsafe_allow_html=True)
     bot_input = st.text_area("Ask the bot for insights", height=120)
     if st.button("Get insight", use_container_width=True) and bot_input.strip():
         st.session_state.messages.append({"role": "user", "content": bot_input.strip()})
