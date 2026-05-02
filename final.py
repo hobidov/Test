@@ -456,7 +456,7 @@ def bar_rows(items: List[Dict[str, Any]], value_key: str, color: str, pct_suffix
 st.set_page_config(page_title="Monkey Baa Impact Dashboard", layout="wide")
 st.markdown("""
 <style>
-.stApp { background: #F8FAFC; }
+.stApp { background: #FFF7E8; }
 
 /* GLOBAL PADDING */
 .block-container {
