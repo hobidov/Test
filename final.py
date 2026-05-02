@@ -602,6 +602,13 @@ with main_col:
         with kpi_cols[idx % 3]:
             kpi_card(kpi["label"], kpi["value"], kpi["category"], kpi["stage"], kpi["color"])
 
+    strongest = analytics["strongest"]
+
+    st.markdown(f"""
+    <div style="margin-top:10px;font-size:14px;color:#374151;">
+    <strong>Key Insight:</strong> The strongest outcome area is <b>{strongest['label']}</b> at <b>{strongest['value']}%</b>, indicating this is where the program delivers the most impact.
+    </div>
+    """, unsafe_allow_html=True)
     # 🔥 MAIN INSIGHT CHART (FIXED POSITION)
     st.markdown('<div class="side-card">', unsafe_allow_html=True)
     spark = find_kpi(analytics["kpis"], "Social Spark")["value"]
@@ -657,12 +664,12 @@ There is a <b>{gap}% gap</b> between initial engagement (Spark) and long-term im
     s1, s2 = st.columns(2)
     with s1:
         st.markdown('<div class="side-card">', unsafe_allow_html=True)
-        st.subheader("Show Comparison")
+        st.subheader("Distribution by Show")
         bar_rows(show_counts, "count", PALETTE["primary"])
         st.markdown("</div>", unsafe_allow_html=True)
     with s2:
         st.markdown('<div class="side-card">', unsafe_allow_html=True)
-        st.subheader("Behaviour Distribution")
+        st.subheader("Post-Show Engagement")
         bar_rows(behaviour_counts, "count", PALETTE["secondary"])
         st.markdown("</div>", unsafe_allow_html=True)
 
