@@ -415,18 +415,17 @@ def kpi_card(label: str, value: int, category: str, stage: str, color: str):
     st.markdown(f"""
         <div style="
             background:white;
-            border:1px solid #e5e7eb;
             border-radius:16px;
-            padding:8px;
-            min-height:90px;
+            padding:16px;
+            margin-bottom:16px;
         ">
-          <div style="font-size:11px;color:#6b7280;">
+          <div style="font-size:12px;color:#6b7280;">
             {category} · {stage}
           </div>
-          <div style="font-size:14px;font-weight:600;margin-top:4px;">
+          <div style="font-size:16px;font-weight:600;margin-top:4px;">
             {label}
           </div>
-          <div style="font-size:26px;font-weight:800;color:{color};margin-top:6px;">
+          <div style="font-size:28px;font-weight:800;color:{color};margin-top:8px;">
             {value}%
           </div>
         </div>
