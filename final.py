@@ -417,8 +417,8 @@ def kpi_card(label: str, value: int, category: str, stage: str, color: str):
             background:white;
             border:1px solid #e5e7eb;
             border-radius:16px;
-            padding:12px;
-            min-height:120px;
+            padding:8px;
+            min-height:90px;
         ">
           <div style="font-size:11px;color:#6b7280;">
             {category} · {stage}
@@ -497,7 +497,7 @@ st.markdown("""
 
 /* KPI SPACING */
 .kpi-card {
-    margin-bottom:10px;
+    margin-bottom:4x;
 }
 
 /* COLUMN GAP FIX */
