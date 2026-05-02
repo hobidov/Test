@@ -496,7 +496,7 @@ st.markdown("""
 
 /* KPI SPACING */
 .kpi-card {
-    margin-bottom:4x;
+    margin-bottom:4px;
 }
 
 /* COLUMN GAP FIX */
@@ -624,9 +624,6 @@ with main_col:
 There is a <b>{gap}% gap</b> between initial engagement (Spark) and long-term impact (Horizon), indicating strong sustained outcomes beyond first impressions.
 </div>
 """, unsafe_allow_html=True)
-    spark = find_kpi(analytics["kpis"], "Social Spark")["value"]
-    growth = find_kpi(analytics["kpis"], "Social Growth")["value"]
-    horizon = find_kpi(analytics["kpis"], "Social Horizon")["value"]
 
     comparison_data = [
         {"label": "Spark", "value": spark},
@@ -686,32 +683,33 @@ There is a <b>{gap}% gap</b> between initial engagement (Spark) and long-term im
         bar_rows(audience_counts, "count", PALETTE["secondary"])
         st.markdown("</div>", unsafe_allow_html=True)
 
-    # 🔥 SENTIMENT ANALYSIS
-        st.markdown('<div class="side-card">', unsafe_allow_html=True)
-        st.subheader("Sentiment Analysis of Participant Feedback")
 
-        sentiment_counts = {
-        "Positive Experience": 0,
-        "Mixed Response": 0,
-        "Challenging Experience": 0
+# 🔥 SENTIMENT ANALYSIS (NOW OUTSIDE s4)
+    st.markdown('<div class="side-card">', unsafe_allow_html=True)
+    st.subheader("Sentiment Analysis of Participant Feedback")
+
+    sentiment_counts = {
+       "Positive Experience": 0,
+       "Mixed Response": 0,
+       "Challenging Experience": 0
     }
 
-        for item in emotion_counts:
-           label = item["label"].lower()
+    for item in emotion_counts:
+       label = item["label"].lower()
 
-           if label in ["happy", "excited", "inspired", "curious"]:
-               sentiment_counts["Positive Experience"] += item["count"]
-           elif label in ["confused", "bored"]:
-               sentiment_counts["Mixed Response"] += item["count"]
-           else:
-               sentiment_counts["Challenging Experience"] += item["count"]
+       if label in ["happy", "excited", "inspired", "curious"]:
+           sentiment_counts["Positive Experience"] += item["count"]
+       elif label in ["confused", "bored"]:
+           sentiment_counts["Mixed Response"] += item["count"]
+       else:
+           sentiment_counts["Challenging Experience"] += item["count"]
+    
+    sentiment_data = [{"label": k, "count": v} for k, v in sentiment_counts.items()]
 
-        sentiment_data = [{"label": k, "count": v} for k, v in sentiment_counts.items()]
+    bar_rows(sentiment_data, "count", PALETTE["secondary"])
 
-        bar_rows(sentiment_data, "count", PALETTE["secondary"])
-
-        st.caption("This chart groups participant responses into overall experience categories.")
-        st.markdown("</div>", unsafe_allow_html=True)
+    st.caption("This chart groups participant responses into overall experience categories.")
+    st.markdown("</div>", unsafe_allow_html=True)
 
 
 
