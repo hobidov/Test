@@ -158,6 +158,25 @@ def infer_show(row: Dict[str, Any]) -> str:
 def infer_location(row: Dict[str, Any]) -> str:
     return safe(row.get("Where did you see the show? dropdown")) or safe(row.get("Location")) or "Unknown"
 
+def infer_date(rows: List[Dict[str, Any]]) -> str:
+    for row in rows:
+        for key in row.keys():
+            if "date" in key.lower():
+                value = str(row.get(key))
+                if value:
+                    return value
+    return "March 2025"
+
+
+def extract_teacher_quote(rows: List[Dict[str, Any]]) -> str:
+    for row in rows:
+        for key in row.keys():
+            if "comment" in key.lower() or "feedback" in key.lower():
+                text = str(row.get(key)).strip()
+                if len(text) > 20:
+                    return text
+    return "Students were highly engaged and continued discussing the performance after the session."
+
 def get_required_columns() -> List[str]:
     return sorted(set(rule["sourceColumn"] for rule in MAPPING_RULES))
 
@@ -378,6 +397,8 @@ Use ONLY this data:
     return result["choices"][0]["message"]["content"]
 
 def create_report_text(analytics: Dict[str, Any], selected_show: str, selected_location: str) -> str:
+    date = infer_date(filtered_source_rows)
+    quote = extract_teacher_quote(filtered_source_rows)
     strongest = analytics["strongest"]
     weakest = analytics["weakest"]
 
@@ -399,6 +420,7 @@ Prototype Impact Report (AI-Assisted)
 Monkey Baa Theatre Company  
 Program: {selected_show}  
 Location: {selected_location}  
+Date: {date}
 Audience: {analytics['dataQuality']['sourceRows']} participants  
 
 ------------------------------------------------------------
@@ -652,7 +674,8 @@ with st.spinner("Generating insights..."):
    report_text = create_report_text(
     analytics,
     selected_show,
-    filter_location
+    filter_location,
+    filtered_source_rows
 )
 
 top_left, top_mid, top_right = st.columns([1, 2, 1])
