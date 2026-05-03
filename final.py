@@ -396,7 +396,7 @@ Use ONLY this data:
 
     return result["choices"][0]["message"]["content"]
 
-def create_report_text(analytics: Dict[str, Any], selected_show: str, selected_location: str) -> str:
+def create_report_text(analytics: Dict[str, Any], selected_show: str, selected_location: str, filtered_source_rows) -> str:
     date = infer_date(filtered_source_rows)
     quote = extract_teacher_quote(filtered_source_rows)
     strongest = analytics["strongest"]
