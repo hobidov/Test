@@ -7,6 +7,9 @@ from typing import Any, Dict, List, Optional, Tuple
 import pandas as pd
 import streamlit as st
 
+from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+from reportlab.lib.styles import getSampleStyleSheet
+
 try:
     import plotly.express as px
 except Exception:
@@ -442,6 +445,25 @@ SUPPORTING DATA
 
 This report is AI-assisted and based on survey data analysis aligned with Monkey Baa’s Theory of Change.
 """
+def generate_pdf(report_text: str, filename="impact_report.pdf"):
+    from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
+    from reportlab.lib.styles import getSampleStyleSheet
+
+    doc = SimpleDocTemplate(filename)
+    styles = getSampleStyleSheet()
+
+    elements = []
+
+    # Split report into lines
+    for line in report_text.split("\n"):
+        if line.strip() == "":
+            elements.append(Spacer(1, 10))
+        else:
+            elements.append(Paragraph(line, styles["Normal"]))
+            elements.append(Spacer(1, 6))
+
+    doc.build(elements)
+    return filename
 def load_uploaded_file(uploaded_file):
     name = uploaded_file.name.lower()
     if name.endswith(".csv"):
@@ -635,60 +657,48 @@ with st.spinner("Generating insights..."):
 
 top_left, top_mid, top_right = st.columns([1, 2, 1])
 with top_left:
-    col1, col2 = st.columns(2)
+    col1, col2, col3 = st.columns(3)
 
+    # TXT DOWNLOAD
     with col1:
         st.download_button(
-            "Download report",
+            "Download TXT",
             data=report_text.encode("utf-8"),
-            file_name="monkey_baa-impact-report.txt",
+            file_name="impact_report.txt",
             mime="text/plain",
             use_container_width=True
         )
 
+    # PDF DOWNLOAD 🔥
     with col2:
-     if st.button("Print Report", use_container_width=True):
-        html_content = f"""
-        <html>
-        <head>
-            <title>Monkey Baa Impact Report</title>
-            <style>
-                body {{
-                    font-family: Arial, sans-serif;
-                    padding: 40px;
-                    line-height: 1.6;
-                    color: #111827;
-                }}
-                h1 {{
-                    font-size: 24px;
-                    margin-bottom: 10px;
-                }}
-                .meta {{
-                    color: #6b7280;
-                    font-size: 14px;
-                    margin-bottom: 20px;
-                }}
-                .content {{
-                    white-space: pre-wrap;
-                    font-size: 15px;
-                }}
-            </style>
-        </head>
-        <body>
-            <h1>Monkey Baa Impact Report</h1>
-            <div class="meta">Generated from dashboard analysis</div>
-            <div class="content">{report_text}</div>
+        if st.button("Generate PDF", use_container_width=True):
+            pdf_file = generate_pdf(report_text)
 
+            with open(pdf_file, "rb") as f:
+                st.download_button(
+                    "Download PDF",
+                    f,
+                    file_name="impact_report.pdf",
+                    mime="application/pdf",
+                    use_container_width=True
+                )
+
+    # PRINT
+    with col3:
+        if st.button("Print Report", use_container_width=True):
+            html_content = f"""
+            <html>
+            <body style="font-family:Arial;padding:40px;white-space:pre-wrap;">
+            {report_text}
             <script>
                 window.onload = function() {{
                     window.print();
                 }}
             </script>
-        </body>
-        </html>
-        """
-
-        st.components.v1.html(html_content, height=0)
+            </body>
+            </html>
+            """
+            st.components.v1.html(html_content, height=0)
 with top_mid:
     st.markdown(f"""
     <div style="text-align:center;">
