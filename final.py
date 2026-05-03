@@ -374,23 +374,74 @@ Use ONLY this data:
 
     return result["choices"][0]["message"]["content"]
 
-def create_report_text(analytics: Dict[str, Any], summary_name: Optional[str] = None) -> str:
-    ai_summary = generate_ai_summary_together(analytics)
+def create_report_text(analytics: Dict[str, Any], selected_show: str, selected_location: str) -> str:
     strongest = analytics["strongest"]
     weakest = analytics["weakest"]
-    social_spark = find_kpi(analytics["kpis"], "Social Spark")
-    social_growth = find_kpi(analytics["kpis"], "Social Growth")
-    social_horizon = find_kpi(analytics["kpis"], "Social Horizon")
-    cultural_spark = find_kpi(analytics["kpis"], "Cultural Spark")
-    cultural_growth = find_kpi(analytics["kpis"], "Cultural Growth")
-    cultural_horizon = find_kpi(analytics["kpis"], "Cultural Horizon")
+
+    social_spark = find_kpi(analytics["kpis"], "Social Spark")["value"]
+    social_growth = find_kpi(analytics["kpis"], "Social Growth")["value"]
+    social_horizon = find_kpi(analytics["kpis"], "Social Horizon")["value"]
+
+    cultural_spark = find_kpi(analytics["kpis"], "Cultural Spark")["value"]
+    cultural_growth = find_kpi(analytics["kpis"], "Cultural Growth")["value"]
+    cultural_horizon = find_kpi(analytics["kpis"], "Cultural Horizon")["value"]
+
+    overall = analytics["overall"]
+
+    gap = social_spark - social_growth
+
     return f"""
-EXECUTIVE SUMMARY (AI GENERATED)
+Prototype Impact Report (AI-Assisted)
 
-{ai_summary}
+Monkey Baa Theatre Company  
+Program: {selected_show}  
+Location: {selected_location}  
+Audience: {analytics['dataQuality']['sourceRows']} participants  
 
-Survey responses from {summary_name or 'the uploaded survey'} indicate stronger immediate outcomes in {lower(strongest['label'])} and weaker performance in {lower(weakest['label'])}. Overall impact is {analytics['overall']}%, showing that both social and cultural impact streams now include spark, growth, and horizon proxy measures."""
+------------------------------------------------------------
 
+IMPACT AT A GLANCE
+• Engagement (Spark): {social_spark}%
+• Cultural Outcomes: {cultural_spark}% – {cultural_horizon}%
+• Social Growth: {social_growth}%
+• Overall Impact Score: {overall}%
+
+These results show strong immediate engagement and cultural resonance, with a clear opportunity to strengthen deeper social development outcomes.
+
+------------------------------------------------------------
+
+KEY INSIGHT
+Students demonstrated high engagement and cultural connection, while Social Growth outcomes were comparatively lower ({social_growth}%). 
+This {gap}% gap between Spark and Growth suggests that while the performance captures attention and imagination, additional support is needed to deepen social development.
+
+------------------------------------------------------------
+
+WHAT THIS MEANS
+• The program is highly engaging and emotionally impactful  
+• Cultural outcomes are consistently strong  
+• Social Growth is the weakest area and requires improvement  
+• Spark does not automatically translate into Growth without intentional design  
+
+------------------------------------------------------------
+
+WHAT WE’RE DOING NEXT
+• Introduce more interactive and collaborative elements  
+• Provide structured post-show learning resources  
+• Support confidence, communication, and peer interaction  
+• Track Social Growth improvements over time  
+
+------------------------------------------------------------
+
+SUPPORTING DATA
+• Social Growth: {social_growth}%  
+• Social Horizon: {social_horizon}%  
+• Cultural Range: {cultural_spark}% – {cultural_horizon}%  
+• Overall Impact: {overall}%  
+
+------------------------------------------------------------
+
+This report is AI-assisted and based on survey data analysis aligned with Monkey Baa’s Theory of Change.
+"""
 def load_uploaded_file(uploaded_file):
     name = uploaded_file.name.lower()
     if name.endswith(".csv"):
@@ -576,7 +627,11 @@ filtered_source_rows = [
 analytics = compute_analytics(filtered_rows, len(source_rows))
 with st.spinner("Generating insights..."):
     
-   report_text = create_report_text(analytics, uploaded_file.name if selected_show == "All shows" else f"{uploaded_file.name} - {selected_show}")
+   report_text = create_report_text(
+    analytics,
+    selected_show,
+    filter_location
+)
 
 top_left, top_mid, top_right = st.columns([1, 2, 1])
 with top_left:
