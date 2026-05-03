@@ -592,28 +592,54 @@ with top_left:
         )
 
     with col2:
-        if st.button("Print report", use_container_width=True):
-            st.markdown(f"""
+      if st.button("Print Report", use_container_width=True):
+         st.markdown(f"""
+        <script>
+        var printWindow = window.open('', '_blank');
+
+        printWindow.document.write(`
+            <html>
+            <head>
+                <title>Monkey Baa Impact Report</title>
+                <style>
+                    body {{
+                        font-family: Arial, sans-serif;
+                        padding: 40px;
+                        line-height: 1.6;
+                        color: #111827;
+                    }}
+                    h1 {{
+                        font-size: 24px;
+                        margin-bottom: 10px;
+                    }}
+                    .meta {{
+                        color: #6b7280;
+                        font-size: 14px;
+                        margin-bottom: 20px;
+                    }}
+                    .content {{
+                        white-space: pre-wrap;
+                        font-size: 15px;
+                    }}
+                </style>
+            </head>
+            <body>
+                <h1>Monkey Baa Impact Report</h1>
+                <div class="meta">Generated from dashboard analysis</div>
+                <div class="content">{report_text}</div>
+
                 <script>
-                var printWindow = window.open('', '', 'height=600,width=800');
-                printWindow.document.write(`
-                    <html>
-                    <head>
-                        <title>Print Report</title>
-                        <style>
-                            body {{ font-family: Arial; padding: 20px; }}
-                            h1 {{ font-size: 20px; }}
-                        </style>
-                    </head>
-                    <body>
-                        <pre>{report_text}</pre>
-                    </body>
-                    </html>
-                `);
-                printWindow.document.close();
-                printWindow.print();
+                    window.onload = function() {{
+                        window.print();
+                    }}
                 </script>
-            """, unsafe_allow_html=True)
+            </body>
+            </html>
+        `);
+
+        printWindow.document.close();
+        </script>
+        """, unsafe_allow_html=True)
 with top_mid:
     st.markdown(f"""
     <div style="text-align:center;">
