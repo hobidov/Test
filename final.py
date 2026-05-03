@@ -580,7 +580,40 @@ with st.spinner("Generating insights..."):
 
 top_left, top_mid, top_right = st.columns([1, 2, 1])
 with top_left:
-    st.download_button("Download report", data=report_text.encode("utf-8"), file_name="monkey_baa-impact-report.txt", mime="text/plain", use_container_width=True)
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.download_button(
+            "Download report",
+            data=report_text.encode("utf-8"),
+            file_name="monkey_baa-impact-report.txt",
+            mime="text/plain",
+            use_container_width=True
+        )
+
+    with col2:
+        if st.button("Print report", use_container_width=True):
+            st.markdown(f"""
+                <script>
+                var printWindow = window.open('', '', 'height=600,width=800');
+                printWindow.document.write(`
+                    <html>
+                    <head>
+                        <title>Print Report</title>
+                        <style>
+                            body {{ font-family: Arial; padding: 20px; }}
+                            h1 {{ font-size: 20px; }}
+                        </style>
+                    </head>
+                    <body>
+                        <pre>{report_text}</pre>
+                    </body>
+                    </html>
+                `);
+                printWindow.document.close();
+                printWindow.print();
+                </script>
+            """, unsafe_allow_html=True)
 with top_mid:
     st.markdown(f"""
     <div style="text-align:center;">
